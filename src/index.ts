@@ -8,8 +8,9 @@ export const PROTOCOL = 'Signal-Fire@2'
 /**
  * Connect to a Signal-Fire server instance.
  * @param url The URL of the Signal-Fire server
+ * @param config WebRTC configuration
  */
-export default async function connect (url: string): Promise<Client> {
+export default async function connect (url: string, config?: RTCConfiguration): Promise<Client> {
   return new Promise<Client>((resolve, reject) => {
     function removeListeners () {
       socket.removeEventListener('open', onResolve)
@@ -19,7 +20,7 @@ export default async function connect (url: string): Promise<Client> {
 
     function onResolve () {
       removeListeners()
-      resolve(new Client(socket))
+      resolve(new Client(socket, config))
     }
 
     function onReject (ev?: any) {
