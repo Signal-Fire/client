@@ -1,14 +1,14 @@
 {
-  "name": "signal-fire2-client",
+  "name": "@signal-fire/client",
   "private": true,
   "version": "0.1.0",
-  "description": "Client for Eve Online ESI",
+  "description": "Client Signal-Fire Server",
   "main": "./dist/index.js",
   "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
-  "homepage": "http://github.com/MichielvdVelde/eve-esi",
+  "homepage": "http://github.com/Signal-Fire/client",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MichielvdVelde/eve-esi.git"
+    "url": "git+https://github.com/Signal-Fire/client.git"
   },
   "files": [
     "dist"
@@ -17,11 +17,9 @@
     "node": ">=10"
   },
   "keywords": [
-    "eve",
-    "online",
-    "esi",
-    "client",
-    "sso"
+    "webrtc",
+    "signal-fire",
+    "datachannel"
   ],
   "license": "MIT",
   "dependencies": {
