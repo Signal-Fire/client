@@ -1,13 +1,14 @@
 # Signal-Fire Client
 
-***Signal-Fire Client** is a **WebRTC** signaling client for
+**Signal-Fire Client** is a **WebRTC** signaling client for
 [Signal-Fire Server](https://github.com/Signal-Fire/server).
 
 ## Install
 
-The client is meant to be used with [browserify].
+The client is meant to be used with [browserify](http://browserify.org).
 
 **Currently the client is a work-in-progres**.
+
 Clone the repository to use the client.
 
 ## Example
