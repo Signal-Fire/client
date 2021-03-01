@@ -24,11 +24,7 @@
     "sso"
   ],
   "license": "MIT",
-  "devDependencies": {},
   "dependencies": {
-    "@lucets/client": "^0.1.0",
-    "@lucets/commands": "^0.2.0",
-    "@lucets/message-hooks": "^0.1.0",
     "eventemitter3": "^4.0.7",
     "nanoid": "^3.1.20"
   }
