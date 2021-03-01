@@ -52,7 +52,7 @@ async function run () {
   const client = await connect('ws://localhost:3003/socket')
   
   client.on('session', async (session: IncomingSession) => {
-    const connection = session.accept()
+    const connection = await session.accept()
   })
 }
 ```
