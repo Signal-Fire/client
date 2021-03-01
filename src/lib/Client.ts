@@ -86,8 +86,7 @@ export default class Client extends EventEmitter3 {
     return session
   }
 
-  // DONE
-  public createPeerConnection (target: string, config?: RTCConfiguration): PeerConnection {
+  public createPeerConnection (target: string, config: RTCConfiguration = {}): PeerConnection {
     if (this.connections.has(target)) {
       throw new Error('Peer connection already created')
     }
@@ -103,7 +102,6 @@ export default class Client extends EventEmitter3 {
     return connection
   }
 
-  // DONE
   public async send (message: OutgoingMessage): Promise<IncomingMessage> {
     if (this.socket.readyState !== WebSocket.OPEN) {
       throw new Error('Socket not open')
