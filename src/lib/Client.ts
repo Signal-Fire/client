@@ -231,6 +231,6 @@ export default class Client extends EventEmitter3 {
     this.socket.removeEventListener('message', this.handleSocketMessage)
     this.socket.removeEventListener('error', this.handleSocketError)
     this.socket.removeEventListener('close', this.handleSocketClose)
-    this.emit('close')
+    this.emit('close', ev.code, ev.reason)
   }
 }
