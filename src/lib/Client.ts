@@ -15,6 +15,7 @@ export interface Message {
   target?: string,
   origin?: string,
   data?: {
+    id?: string,
     candidate?: any,
     sdp?: any,
     message?: string
@@ -28,6 +29,7 @@ export default class Client extends EventEmitter3 {
   public readonly socket: WebSocket
   public readonly config: RTCConfiguration
 
+  private _id: string
   private readonly connections: Map<string, PeerConnection> = new Map()
   private readonly pendingResponses: Map<string, (message: IncomingMessage) => void> = new Map()
   private readonly pendingIncomingSessions: Map<string, IncomingSession> = new Map()
@@ -52,6 +54,10 @@ export default class Client extends EventEmitter3 {
 
     this.socket = socket
     this.config = config
+  }
+
+  public get id () {
+    return this._id
   }
 
   public async createSession (target: string) {
@@ -134,6 +140,15 @@ export default class Client extends EventEmitter3 {
     }
 
     switch (message.cmd) {
+      case 'id':
+        if (this._id) {
+          this.emit('error', new Error('Already got an ID'))
+          return
+        }
+
+        const id = this._id = message.data.id
+        this.emit('id', id)
+        return
       case 'session-start':
         this.handleSessionStart(message)
         return
