@@ -34,7 +34,6 @@ export default class PeerConnection extends EventEmitter3 {
     this.raw.addTrack(track, ...streams)
   }
 
-  // DONE
   public createDataChannel (label: string): DataChannel {
     if (this.dataChannels.has(label)) {
       throw new Error('Data channel already created')
@@ -51,7 +50,6 @@ export default class PeerConnection extends EventEmitter3 {
     return channel
   }
 
-  // DONE
   public async handleMessage (message: IncomingMessage) {
     switch (message.cmd) {
       case 'ice':
@@ -75,7 +73,6 @@ export default class PeerConnection extends EventEmitter3 {
     }
   }
 
-  // DONE
   private async handleIceCandidate (ev: RTCPeerConnectionIceEvent) {
     await this.client.send({
       cmd: 'ice',
@@ -85,7 +82,6 @@ export default class PeerConnection extends EventEmitter3 {
     })
   }
 
-  // DONE
   private async handleNegotiationNeeded () {
     const offer = await this.raw.createOffer()
     this.raw.setLocalDescription(offer)
@@ -102,7 +98,6 @@ export default class PeerConnection extends EventEmitter3 {
     this.emit('track', ev.track, ev.streams)
   }
 
-  // DONE
   private handleDataChannel (ev: RTCDataChannelEvent) {
     if (!this.listenerCount('data-channel')) {
       this.emit('error', new Error('Incoming data channel, but no listener(s)'))

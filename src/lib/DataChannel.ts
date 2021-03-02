@@ -29,12 +29,10 @@ export default class DataChannel extends EventEmitter3 {
     return this.raw.label
   }
 
-  // DONE
   public send (data: string | Blob | ArrayBuffer | ArrayBufferView) {
     this.raw.send(<any>data)
   }
 
-  // DONE
   public async close () {
     return new Promise<void>(resolve => {
       this.once('close', resolve)
@@ -42,22 +40,18 @@ export default class DataChannel extends EventEmitter3 {
     })
   }
 
-  // DONE
   private handleOpen () {
     this.emit('open')
   }
 
-  // DONE
   private handleError (ev: RTCErrorEvent) {
     this.emit('error', ev.error)
   }
 
-  // DONE
   private handleMessage (ev: MessageEvent) {
     this.emit('message', ev.data)
   }
 
-  // DONE
   private handleClose () {
     this.raw.removeEventListener('open', this.handleOpen)
     this.raw.removeEventListener('error', this.handleError)
