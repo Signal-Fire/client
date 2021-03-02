@@ -30,6 +30,10 @@ export default class PeerConnection extends EventEmitter3 {
     raw.addEventListener('track', this.handleTrack)
   }
 
+  public addTrack (track: MediaStreamTrack, ...streams: MediaStream[]) {
+    this.raw.addTrack(track, ...streams)
+  }
+
   // DONE
   public createDataChannel (label: string): DataChannel {
     if (this.dataChannels.has(label)) {
