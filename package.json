@@ -13,9 +13,6 @@
   "files": [
     "dist"
   ],
-  "engines": {
-    "node": ">=10"
-  },
   "keywords": [
     "webrtc",
     "signal-fire",
