@@ -169,6 +169,10 @@ export default class Client extends EventEmitter3 {
   }
 
   private handleSessionStart (message: IncomingMessage) {
+    if (!this.listenerCount('session')) {
+      this.emit('error', new Error('Incoming session, but no listener(s)'))
+    }
+
     const session = new IncomingSession(this, message.origin)
 
     session.once('settled', () => {
@@ -218,6 +222,10 @@ export default class Client extends EventEmitter3 {
     let connection = this.connections.get(message.origin)
 
     if (!connection) {
+      if (!this.listenerCount('incoming')) {
+        this.emit('error', new Error('Incoming peer connection, but no listener(s)'))
+      }
+
       connection = this.createPeerConnection(message.origin)
       this.emit('incoming', connection)
     }
