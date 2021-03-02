@@ -30,10 +30,18 @@ export default class DataChannel extends EventEmitter3 {
   }
 
   public send (data: string | Blob | ArrayBuffer | ArrayBufferView) {
+    if (this.raw.readyState !== 'open') {
+      throw new Error('Data channel not open')
+    }
+
     this.raw.send(<any>data)
   }
 
   public async close () {
+    if (this.raw.readyState !== 'open') {
+      throw new Error('Data channel not open')
+    }
+
     return new Promise<void>(resolve => {
       this.once('close', resolve)
       this.raw.close()
