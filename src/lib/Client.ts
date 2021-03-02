@@ -138,14 +138,8 @@ export default class Client extends EventEmitter3 {
     }
 
     switch (message.cmd) {
-      case 'id':
-        if (this._id) {
-          this.emit('error', new Error('Already got an ID'))
-          return
-        }
-
-        const id = this._id = message.data.id
-        this.emit('id', id)
+      case 'welcome':
+        this.handleWelcome(message)
         return
       case 'session-start':
         this.handleSessionStart(message)
@@ -162,6 +156,16 @@ export default class Client extends EventEmitter3 {
         this.handlePeerMessage(message)
         return
     }
+  }
+
+  private handleWelcome (message: IncomingMessage) {
+    if (this._id) {
+      this.emit('error', new Error('Already got an ID'))
+      return
+    }
+
+    const id = this._id = message.data.id
+    this.emit('welcome', id)
   }
 
   private handleSessionStart (message: IncomingMessage) {
