@@ -7,8 +7,15 @@ async function run () {
   const client = await connect('ws://localhost:3003/socket')
   const session = await client.createSession('<target id>')
 
-  session.on('accepted', (connection: PeerConnection) => {
+  session.on('accepted', async (connection: PeerConnection) => {
     console.log('Session accepted!')
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    })
+
+    stream.getTracks().forEach(track => connection.addTrack(track, stream))
   })
 
   session.on('rejected', () => {
