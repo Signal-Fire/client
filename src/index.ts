@@ -34,3 +34,9 @@ export default async function connect (url: string, config?: RTCConfiguration): 
     socket.addEventListener('close', onReject)
   })
 }
+
+export { default as DataChannel } from './lib/DataChannel'
+export { default as PeerConnection } from './lib/PeerConnection'
+export { default as Client } from './lib/Client'
+export { default as IncomingSession } from './lib/IncomingSession'
+export { default as OutgoingSession } from './lib/OutgoingSession'
