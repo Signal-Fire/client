@@ -99,7 +99,7 @@ export default class PeerConnection extends EventEmitter3 {
   }
 
   private handleTrack (ev: RTCTrackEvent) {
-    this.emit('track', ev.track)
+    this.emit('track', ev.track, ev.streams)
   }
 
   // DONE
