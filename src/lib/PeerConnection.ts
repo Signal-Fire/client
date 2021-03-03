@@ -50,6 +50,10 @@ export default class PeerConnection extends EventEmitter3 {
     return channel
   }
 
+  public getDataChannel (label: string) {
+    return this.dataChannels.get(label)
+  }
+
   public async handleMessage (message: IncomingMessage) {
     switch (message.cmd) {
       case 'ice':
