@@ -19,7 +19,7 @@ export interface Message {
     candidate?: any,
     sdp?: any,
     message?: string,
-    rtc?: RTCConfiguration
+    config?: RTCConfiguration
   }
 }
 
@@ -167,11 +167,11 @@ export default class Client extends EventEmitter3 {
 
     const id = this._id = message.data.id
 
-    if (message.data.rtc) {
+    if (message.data.config) {
       // @ts-ignore
       this.config = {
         ...this.config,
-        ...message.data.rtc
+        ...message.data.config
       }
     }
 
