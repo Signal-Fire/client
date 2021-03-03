@@ -65,7 +65,7 @@ export default class PeerConnection extends EventEmitter3 {
         this.raw.setLocalDescription(answer)
         await this.client.send({
           cmd: 'answer',
-          target: message.origin,
+          target: this.target,
           data: {
             sdp: this.raw.localDescription
           }
@@ -80,6 +80,7 @@ export default class PeerConnection extends EventEmitter3 {
   private async handleIceCandidate (ev: RTCPeerConnectionIceEvent) {
     await this.client.send({
       cmd: 'ice',
+      target: this.target,
       data: {
         candidate: ev.candidate
       }
@@ -92,6 +93,7 @@ export default class PeerConnection extends EventEmitter3 {
 
     await this.client.send({
       cmd: 'offer',
+      target: this.target,
       data: {
         sdp: this.raw.localDescription
       }
