@@ -18,7 +18,8 @@ export interface Message {
     id?: string,
     candidate?: any,
     sdp?: any,
-    message?: string
+    message?: string,
+    rtc?: RTCConfiguration
   }
 }
 
@@ -165,6 +166,15 @@ export default class Client extends EventEmitter3 {
     }
 
     const id = this._id = message.data.id
+
+    if (message.data.rtc) {
+      // @ts-ignore
+      this.config = {
+        ...this.config,
+        ...message.data.rtc
+      }
+    }
+
     this.emit('welcome', id)
   }
 
