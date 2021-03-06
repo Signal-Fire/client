@@ -78,6 +78,10 @@ export default class PeerConnection extends EventEmitter3 {
   }
 
   private async handleIceCandidate (ev: RTCPeerConnectionIceEvent) {
+    if (!ev.candidate) {
+      return
+    }
+
     await this.client.send({
       cmd: 'ice',
       target: this.target,
