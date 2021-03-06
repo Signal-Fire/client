@@ -60,7 +60,7 @@ export default class PeerConnection extends EventEmitter3 {
         this.raw.addIceCandidate(new RTCIceCandidate(message.data.candidate))
         break
       case 'offer':
-        this.raw.setRemoteDescription(message.data.sdp)
+        this.raw.setRemoteDescription(new RTCSessionDescription(message.data.sdp))
         const answer = await this.raw.createAnswer()
         this.raw.setLocalDescription(answer)
         await this.client.send({
