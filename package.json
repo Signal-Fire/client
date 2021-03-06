@@ -1,8 +1,7 @@
 {
   "name": "@signal-fire/client",
-  "private": true,
   "version": "0.1.0",
-  "description": "Client Signal-Fire Server",
+  "description": "Client for Signal-Fire Server",
   "main": "./dist/index.js",
   "author": "Michiel van der Velde <michiel@michielvdvelde.nl>",
   "homepage": "http://github.com/Signal-Fire/client",
