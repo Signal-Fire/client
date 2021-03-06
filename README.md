@@ -7,9 +7,11 @@
 
 The client is meant to be used with [browserify](http://browserify.org).
 
-**Currently the client is a work-in-progres**.
+Install using npm:
 
-Clone the repository to use the client.
+```
+npm i @signal-fire/client
+```
 
 ## Example
 
