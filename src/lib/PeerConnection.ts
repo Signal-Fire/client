@@ -19,13 +19,13 @@ export default class PeerConnection extends EventEmitter3 {
 
     this.handleNegotiationNeeded = this.handleNegotiationNeeded.bind(this)
     this.handleIceCandidate = this.handleIceCandidate.bind(this)
-    this.handleConnectionStateChange = this.handleConnectionStateChange.bind(this)
+    this.handleIceConnectionStateChange = this.handleIceConnectionStateChange.bind(this)
     this.handleDataChannel = this.handleDataChannel.bind(this)
     this.handleTrack = this.handleTrack.bind(this)
 
     raw.addEventListener('negotiationneeded', this.handleNegotiationNeeded)
     raw.addEventListener('icecandidate', this.handleIceCandidate)
-    raw.addEventListener('connectionstatechange', this.handleConnectionStateChange)
+    raw.addEventListener('iceconnectionstatechange', this.handleIceConnectionStateChange)
     raw.addEventListener('datachannel', this.handleDataChannel)
     raw.addEventListener('track', this.handleTrack)
   }
@@ -119,17 +119,13 @@ export default class PeerConnection extends EventEmitter3 {
     this.emit('data-channel', channel)
   }
 
-  // TODO: Add other states
-  private handleConnectionStateChange () {
-    switch (this.raw.connectionState) {
-      case 'connected':
-        this.emit('connected')
-        break
-      case 'closed':
-        this.handleClose()
-        break
+  private handleIceConnectionStateChange () {
+    switch (this.raw.iceConnectionState) {
       case 'failed':
         this.emit('failed')
+        this.handleClose()
+        break
+      case 'closed':
         this.handleClose()
         break
     }
@@ -138,7 +134,7 @@ export default class PeerConnection extends EventEmitter3 {
   private handleClose () {
     this.raw.removeEventListener('negotiationneeded', this.handleNegotiationNeeded)
     this.raw.removeEventListener('icecandidate', this.handleIceCandidate)
-    this.raw.removeEventListener('connectionstatechange', this.handleConnectionStateChange)
+    this.raw.removeEventListener('iceconnectionstatechange', this.handleIceConnectionStateChange)
     this.raw.removeEventListener('datachannel', this.handleDataChannel)
     this.raw.removeEventListener('track', this.handleTrack)
 
