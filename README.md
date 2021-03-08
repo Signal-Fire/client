@@ -9,13 +9,10 @@ clients to communicate directly with each other.
 
 ## Features
 
-* Desgigned for the __browser__
 * Includes [webrtc-adapter](https://github.com/webrtchacks/adapter) for browser compatibility
 * Works __seamlessly__ with [Signal-Fire Server](https://github.com/Signal-Fire/server)
 * __Abstracts away__ the hassles of setting up peer connections
 * Uses a __simple__, JSON-based [protocol](https://github.com/Signal-Fire/server/blob/main/PROTOCOL.md)
-* __Flexible__ and __easy__ to use
-* Uses `EventTarget` __natively__
 * No __forest of dependencies__
 
 ## Install
@@ -36,7 +33,7 @@ The Client is designed to be used with [browserify](http://browserify.org).
 
 > __Note__: Is is assumed the server is running
 > [Signal Fire Server](https://github.com/Signal-Fire/server)
-> or a server which uses the same protocol.
+> or a server which uses the same [protocol](https://github.com/Signal-Fire/server/blob/main/PROTOCOL.md).
 
 > See the documentation for more examples!
 
