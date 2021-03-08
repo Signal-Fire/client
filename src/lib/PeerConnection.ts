@@ -35,7 +35,7 @@ export default class PeerConnection extends EventTarget {
 
   public createDataChannel (label: string): RTCDataChannel {
     if (this.dataChannels.has(label)) {
-      throw new Error('Data channel aleady created')
+      throw new Error('Data channel already created')
     }
 
     const channel = this.raw.createDataChannel(label)
@@ -46,6 +46,10 @@ export default class PeerConnection extends EventTarget {
 
     this.dataChannels.set(label, channel)
     return channel
+  }
+
+  public getDataChannel (label: string): RTCDataChannel {
+    return this.dataChannels.get(label)
   }
 
   public async handleMessage (message: IncomingMessage): Promise<void> {
