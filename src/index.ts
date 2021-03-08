@@ -1,7 +1,7 @@
 'use strict'
 
 import adapter from 'webrtc-adapter'
-import Client, { OutgoingMessage } from './lib/Client'
+import Client from './lib/Client'
 
 /** The client protocol */
 export const PROTOCOL = 'Signal-Fire@2'
