@@ -2,7 +2,6 @@
 
 * [Install](#Install)
 * [Connecting to the Server](#Connecting-to-the-Server)
-* [Getting an ID](#Getting-an-ID)
 * [Starting a Session](#Starting-a-Session)
 * [Accepting or Rejecting a Session](#Accepting-or-rejecting-a-Session)
 * [Media Setup](#Media-Setup)
@@ -37,19 +36,6 @@ connect('ws://localhost/socket')
 ```
 
 That's all there is to it!
-
-## Getting an ID
-
-Each client receives and ID from the Server.
-The ID uniquely identifies the Client. It is
-received in the first message the Server sends,
-which is a `welcome` message.
-
-```typescript
-client.addEventListener('welcome', (ev: CustomEvent<string>) => {
-  console.log(`My ID is ${ev.detail})
-})
-```
 
 ## Starting a Session
 
