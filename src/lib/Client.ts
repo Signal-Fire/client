@@ -1,10 +1,9 @@
 'use strict'
 
-import EventEmitter3 from 'eventemitter3'
-import PeerConnection from './PeerConnection'
-import { PROTOCOL } from '../index'
-import { nanoid } from 'nanoid'
+import { nanoid } from 'nanoid/async'
 
+import { PROTOCOL } from '../index'
+import PeerConnection from './PeerConnection'
 import IncomingSession from './IncomingSession'
 import OutgoingSession from './OutgoingSession'
 
@@ -12,8 +11,8 @@ export interface Message {
   id?: string,
   cmd?: string,
   ok?: boolean,
-  target?: string,
   origin?: string,
+  target?: string,
   data?: {
     id?: string,
     candidate?: any,
@@ -32,17 +31,17 @@ export interface Message {
 export interface IncomingMessage extends Message {}
 export interface OutgoingMessage extends Message {}
 
-export default class Client extends EventEmitter3 {
-  public readonly socket: WebSocket
-  public readonly config: RTCConfiguration
+export default class Client extends EventTarget {
+  public readonly id: string
+  public readonly configuration: RTCConfiguration
 
-  private _id: string
+  private readonly socket: WebSocket
   private readonly connections: Map<string, PeerConnection> = new Map()
-  private readonly pendingResponses: Map<string, (message: IncomingMessage) => void> = new Map()
   private readonly pendingIncomingSessions: Map<string, IncomingSession> = new Map()
   private readonly pendingOutgoingSessions: Map<string, OutgoingSession> = new Map()
+  private readonly pendingResponses: Map<string, (message: IncomingMessage) => void> = new Map()
 
-  public constructor (socket: WebSocket, config: RTCConfiguration = {}) {
+  public constructor (socket: WebSocket, configuration: RTCConfiguration = {}) {
     super()
 
     if (socket.readyState !== WebSocket.OPEN) {
@@ -60,21 +59,15 @@ export default class Client extends EventEmitter3 {
     socket.addEventListener('close', this.handleSocketClose)
 
     this.socket = socket
-    this.config = config
+    this.configuration = configuration
   }
 
-  public get id () {
-    return this._id
-  }
-
-  public async createSession (target: string) {
-    if (this._id === target) {
-      throw new Error('Can\'t start a session with yourself')
-    }
-
-    if (this.connections.has(target)) {
+  public async createSession (target: string): Promise<OutgoingSession> {
+    if (this.id === target) {
+      throw new Error('Can\'t send a message to yourself')
+    } else if (this.connections.has(target)) {
       throw new Error('Peer connection already established')
-    } else if (this.pendingIncomingSessions.has(target) || this.pendingOutgoingSessions.has(target)) {
+    } else if (this.pendingOutgoingSessions.has(target), this.pendingIncomingSessions.has(target)) {
       throw new Error('Session request already active')
     }
 
@@ -89,29 +82,27 @@ export default class Client extends EventEmitter3 {
 
     const session = new OutgoingSession(this, target)
 
-    session.once('settled', () => {
+    session.addEventListener('settled', () => {
       this.pendingOutgoingSessions.delete(target)
-    })
+    }, { once: true })
 
     this.pendingOutgoingSessions.set(target, session)
     return session
   }
 
-  public createPeerConnection (target: string, config: RTCConfiguration = {}): PeerConnection {
-    if (this._id === target) {
-      throw new Error('Can\'create a connection with yourself')
-    }
-
-    if (this.connections.has(target)) {
+  public createPeerConnection (target?: string, configuration?: RTCConfiguration): PeerConnection {
+    if (this.id === target) {
+      throw new Error('Can\'t create a connection with yourself')
+    } else if (this.connections.has(target)) {
       throw new Error('Peer connection already created')
     }
 
-    const raw = new RTCPeerConnection({ ...this.config, ...config })
-    const connection = new PeerConnection(this, target, raw)
+    const raw = new RTCPeerConnection({ ...this.configuration, ...(configuration ?? {}) })
+    const connection = new PeerConnection(this,target, raw)
 
-    connection.once('close', () => {
+    connection.addEventListener('close', () => {
       this.connections.delete(target)
-    })
+    }, { once: true })
 
     this.connections.set(target, connection)
     return connection
@@ -120,11 +111,11 @@ export default class Client extends EventEmitter3 {
   public async send (message: OutgoingMessage): Promise<IncomingMessage> {
     if (this.socket.readyState !== WebSocket.OPEN) {
       throw new Error('Socket not open')
-    } else if (message.target && this._id === message.target) {
+    } else if (message.target && message.target === this.id) {
       throw new Error('Can\'t send to yourself')
     }
 
-    message.id = message.id ?? nanoid()
+    message.id = message.id ?? await nanoid()
     return new Promise<IncomingMessage>(resolve => {
       this.pendingResponses.set(message.id, resolve)
       this.socket.send(JSON.stringify(message))
@@ -133,7 +124,10 @@ export default class Client extends EventEmitter3 {
 
   private handleSocketMessage (ev: MessageEvent) {
     if (typeof ev.data !== 'string') {
-      this.emit('error', new Error('Expected a string'))
+      this.dispatchEvent(new CustomEvent('error', {
+        detail: new Error('Expected a string')
+      }))
+
       return
     }
 
@@ -142,7 +136,9 @@ export default class Client extends EventEmitter3 {
     try {
       message = JSON.parse(ev.data)
     } catch (e) {
-      this.emit('error', new Error('Unable to parse message'))
+      this.dispatchEvent(new CustomEvent('error', {
+        detail: new Error('Unable to parse message')
+      }))
       return
     }
 
@@ -176,37 +172,40 @@ export default class Client extends EventEmitter3 {
   }
 
   private handleWelcome (message: IncomingMessage) {
-    if (this._id) {
-      this.emit('error', new Error('Already got an ID'))
+    if (this.id) {
+      this.dispatchEvent(new CustomEvent('error', {
+        detail: new Error('Already got an ID')
+      }))
       return
     }
 
-    const id = this._id = message.data.id
+    // @ts-ignore
+    const id = this.id = message.data.id
 
     if (message.data.config) {
       // @ts-ignore
       this.config = {
-        ...this.config,
+        ...this.configuration,
         ...message.data.config
       }
     }
 
-    this.emit('welcome', id)
+    this.dispatchEvent(new CustomEvent('welcome', {
+      detail: id
+    }))
   }
 
   private handleSessionStart (message: IncomingMessage) {
-    if (!this.listenerCount('session')) {
-      this.emit('error', new Error('Incoming session, but no listener(s)'))
-    }
-
     const session = new IncomingSession(this, message.origin)
 
-    session.once('settled', () => {
+    session.addEventListener('settled', () => {
       this.pendingIncomingSessions.delete(message.origin)
-    })
+    }, { once: true })
 
     this.pendingIncomingSessions.set(message.origin, session)
-    this.emit('session', session)
+    this.dispatchEvent(new CustomEvent('session', {
+      detail: session
+    }))
   }
 
   private handleSessionUpdate (message: IncomingMessage) {
@@ -248,25 +247,31 @@ export default class Client extends EventEmitter3 {
     let connection = this.connections.get(message.origin)
 
     if (!connection) {
-      if (!this.listenerCount('incoming')) {
-        this.emit('error', new Error('Incoming peer connection, but no listener(s)'))
-      }
-
       connection = this.createPeerConnection(message.origin)
-      this.emit('incoming', connection)
+      this.dispatchEvent(new CustomEvent('incoming', {
+        detail: connection
+      }))
     }
 
     connection.handleMessage(message)
   }
 
   private handleSocketError (ev: ErrorEvent) {
-    this.emit('error', ev.error)
+    this.dispatchEvent(new CustomEvent('error', {
+      detail: ev.error
+    }))
   }
 
   private handleSocketClose (ev: CloseEvent) {
     this.socket.removeEventListener('message', this.handleSocketMessage)
     this.socket.removeEventListener('error', this.handleSocketError)
     this.socket.removeEventListener('close', this.handleSocketClose)
-    this.emit('close', ev.code, ev.reason)
+
+    this.dispatchEvent(new CustomEvent('close', {
+      detail: {
+        code: ev.code,
+        reason: ev.reason
+      }
+    }))
   }
 }

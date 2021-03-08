@@ -30,7 +30,7 @@ async function run () {
   const client = await connect('ws://localhost:3003/socket')
   const session = await client.createSession('<target id>')
 
-  session.on('accepted', async (connection: PeerConnection) => {
+  session.addEventListener('accepted', (ev: CustomEvent<PeerConnection>) => {
     console.log('Session accepted!')
 
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -41,11 +41,11 @@ async function run () {
     stream.getTracks().forEach(track => connection.addTrack(track, stream))
   })
 
-  session.on('rejected', () => {
+  session.addEventListener('rejected', () => {
     console.log('Session rejected')
   })
 
-  session.on('timed-out', () => {
+  session.addEventListener('timed-out', () => {
     console.log('Session timed out')
   })
 }
@@ -59,8 +59,8 @@ import IncomingSession from './lib/IncomingSession'
 
 async function run () {
   const client = await connect('ws://localhost:3003/socket')
-  
-  client.on('session', async (session: IncomingSession) => {
+
+  client.addEventListener('session', (ev: CustomEvent<IncomingSession>) => {
     const connection = await session.accept()
   })
 }

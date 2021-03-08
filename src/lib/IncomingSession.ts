@@ -1,11 +1,11 @@
 'use strict'
 
-import EventEmitter3 from 'eventemitter3'
+import {
+  Client,
+  PeerConnection
+} from '../index'
 
-import Client from './Client'
-import PeerConnection from './PeerConnection'
-
-export default class IncomingSession extends EventEmitter3 {
+export default class IncomingSession extends EventTarget {
   public readonly client: Client
   public readonly origin: string
 
@@ -33,19 +33,19 @@ export default class IncomingSession extends EventEmitter3 {
       throw err
     }
 
-    return new Promise<PeerConnection>(resolve => {
-      const onIncoming = (connection: PeerConnection) => {
-        if (connection.target === this.origin) {
-          this.client.removeListener('incoming', onIncoming)
-          resolve(connection)
+    return new Promise<PeerConnection>((resolve) => {
+      const onIncoming = (ev: CustomEvent<PeerConnection>) => {
+        if (ev.detail.target === this.origin) {
+          this.client.removeEventListener('incoming', onIncoming)
+          resolve(ev.detail)
         }
       }
 
-      this.client.on('incoming', onIncoming)
+      this.client.addEventListener('incoming', onIncoming)
     })
   }
 
-  public async reject (reason?: string): Promise<void> {
+  public async reject (): Promise<void> {
     if (this.settled) {
       throw new Error('Request already settled')
     }
@@ -60,23 +60,25 @@ export default class IncomingSession extends EventEmitter3 {
       this.settle('error', err)
       throw err
     }
+
+    this.settle('rejected')
   }
 
-  public handleCancel () {
+  public handleCancel (): void {
     this.settle('canceled')
   }
 
-  public handleTimeout () {
+  public handleTimeout (): void {
     this.settle('timed-out')
   }
 
-  private settle (type: string, arg?: any) {
+  private settle (type: string, arg?: any): void {
     if (this.settled) {
       return
     }
 
     this.settled = true
-    this.emit(type, arg)
-    this.emit('settled')
+    this.dispatchEvent(arg ? new CustomEvent(type, { detail: arg }) : new Event(type))
+    this.dispatchEvent(new Event('settled'))
   }
 }
