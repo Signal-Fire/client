@@ -3,9 +3,15 @@
 **Signal-Fire Client** is a **WebRTC** signaling client for
 [Signal-Fire Server](https://github.com/Signal-Fire/server).
 
-## Install
+## Features
 
-The client is meant to be used with [browserify](http://browserify.org).
+* Works __seamlessly__ with [Signal-Fire Server](https://github.com/Signal-Fire/server)
+* __Abstracts away__ the hassles of setting up peer connections
+* Uses a __simple__, JSON-based protocol
+* __Flexible__ and __easy__ to use
+* Uses `EventTarget` natively for browser compatibility
+
+## Install
 
 Install using npm:
 
@@ -13,12 +19,19 @@ Install using npm:
 npm i @signal-fire/client
 ```
 
+The Client is designed to be used with [browserify](http://browserify.org).
+
+## Documentation
+
+[Click here to view the documentation](https://signal-fire.github.io/client/).
+
 ## Example
 
-**Note:**: It is assumed the server is running
-[Signal-Fire Server](https://github.com/Signal-Fire/server).
-The server uses a simple JSON protocol which will
-soon be documented.
+> __Note__: Is is assumed the server is running
+> [Signal Fire Server](https://github.com/Signal-Fire/server)
+> or a server which uses the same protocol.
+
+> See the documentation for more examples!
 
 This example shows how to start a session.
 
