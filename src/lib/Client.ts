@@ -41,14 +41,14 @@ export default class Client extends EventTarget {
   private readonly pendingOutgoingSessions: Map<string, OutgoingSession> = new Map()
   private readonly pendingResponses: Map<string, (message: IncomingMessage) => void> = new Map()
 
-  public constructor (socket: WebSocket, configuration: RTCConfiguration = {}) {
+  public constructor (id: string, socket: WebSocket, configuration: RTCConfiguration = {}) {
     super()
 
     if (socket.readyState !== WebSocket.OPEN) {
       throw new Error('Expected an open socket')
-    } else if (socket.protocol !== PROTOCOL) {
-      throw new Error(`Expected protocol to be ${PROTOCOL} but got ${socket.protocol ?? 'none'}`)
     }
+
+    this.id = id
 
     this.handleSocketMessage = this.handleSocketMessage.bind(this)
     this.handleSocketError = this.handleSocketError.bind(this)
