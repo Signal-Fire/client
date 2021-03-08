@@ -2,7 +2,8 @@
 
 import {
   Client,
-  PeerConnection
+  PeerConnection,
+  OutgoingMessage
 } from '../index'
 
 export default class IncomingSession extends EventTarget {
@@ -36,15 +37,23 @@ export default class IncomingSession extends EventTarget {
     return this.client.createPeerConnection(this.origin)
   }
 
-  public async reject (): Promise<void> {
+  public async reject (reason?: string): Promise<void> {
     if (this.settled) {
       throw new Error('Request already settled')
     }
 
-    const response = await this.client.send({
+    const request: OutgoingMessage = {
       cmd: 'session-reject',
       target: this.origin
-    })
+    }
+
+    if (reason) {
+      request.data = {
+        message: reason
+      }
+    }
+
+    const response = await this.client.send(request)
 
     if (!response.ok) {
       const err = new Error(response.data.message)

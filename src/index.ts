@@ -1,7 +1,7 @@
 'use strict'
 
 import adapter from 'webrtc-adapter'
-import Client from './lib/Client'
+import Client, { OutgoingMessage } from './lib/Client'
 
 /** The client protocol */
 export const PROTOCOL = 'Signal-Fire@2'
@@ -36,7 +36,7 @@ export default async function connect (url: string, config?: RTCConfiguration): 
   })
 }
 
-export { default as Client } from './lib/Client'
+export { default as Client, Message, IncomingMessage, OutgoingMessage } from './lib/Client'
 export { default as PeerConnection } from './lib/PeerConnection'
 export { default as IncomingSession } from './lib/IncomingSession'
 export { default as OutgoingSession } from './lib/OutgoingSession'
