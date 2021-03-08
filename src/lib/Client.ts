@@ -68,6 +68,10 @@ export default class Client extends EventEmitter3 {
   }
 
   public async createSession (target: string) {
+    if (this._id === target) {
+      throw new Error('Can\'t start a session with yourself')
+    }
+
     if (this.connections.has(target)) {
       throw new Error('Peer connection already established')
     } else if (this.pendingIncomingSessions.has(target) || this.pendingOutgoingSessions.has(target)) {
@@ -94,6 +98,10 @@ export default class Client extends EventEmitter3 {
   }
 
   public createPeerConnection (target: string, config: RTCConfiguration = {}): PeerConnection {
+    if (this._id === target) {
+      throw new Error('Can\'create a connection with yourself')
+    }
+
     if (this.connections.has(target)) {
       throw new Error('Peer connection already created')
     }
@@ -112,6 +120,8 @@ export default class Client extends EventEmitter3 {
   public async send (message: OutgoingMessage): Promise<IncomingMessage> {
     if (this.socket.readyState !== WebSocket.OPEN) {
       throw new Error('Socket not open')
+    } else if (message.target && this._id === message.target) {
+      throw new Error('Can\'t send to yourself')
     }
 
     message.id = message.id ?? nanoid()
