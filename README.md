@@ -33,6 +33,7 @@ async function run () {
   session.addEventListener('accepted', (ev: CustomEvent<PeerConnection>) => {
     console.log('Session accepted!')
 
+    const connection = ev.detail
     const stream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true
@@ -61,6 +62,7 @@ async function run () {
   const client = await connect('ws://localhost:3003/socket')
 
   client.addEventListener('session', (ev: CustomEvent<IncomingSession>) => {
+    const session = ev.detail
     const connection = await session.accept()
   })
 }
