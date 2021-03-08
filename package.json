@@ -19,7 +19,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "eventemitter3": "^4.0.7",
     "nanoid": "^3.1.20",
     "webrtc-adapter": "^7.7.0"
   }

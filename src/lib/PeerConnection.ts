@@ -1,15 +1,14 @@
 'use strict'
 
-import EventEmitter3 from 'eventemitter3'
-import Client, { IncomingMessage } from './Client'
-import DataChannel from './DataChannel'
+import Client from './Client'
+import { IncomingMessage } from './Client'
 
-export default class PeerConnection extends EventEmitter3 {
+export default class PeerConnection extends EventTarget {
   public readonly client: Client
   public readonly target: string
   public readonly raw: RTCPeerConnection
 
-  private readonly dataChannels: Map<string, DataChannel> = new Map()
+  private readonly dataChannels: Map<string, RTCDataChannel> = new Map()
 
   public constructor (client: Client, target: string, raw: RTCPeerConnection) {
     super()
@@ -34,27 +33,22 @@ export default class PeerConnection extends EventEmitter3 {
     this.raw.addTrack(track, ...streams)
   }
 
-  public createDataChannel (label: string): DataChannel {
+  public createDataChannel (label: string): RTCDataChannel {
     if (this.dataChannels.has(label)) {
-      throw new Error('Data channel already created')
+      throw new Error('Data channel aleady created')
     }
 
-    const raw = this.raw.createDataChannel(label)
-    const channel = new DataChannel(this, raw)
+    const channel = this.raw.createDataChannel(label)
 
-    channel.once('close', () => {
+    channel.addEventListener('close', () => {
       this.dataChannels.delete(label)
-    })
+    }, { once: true })
 
     this.dataChannels.set(label, channel)
     return channel
   }
 
-  public getDataChannel (label: string) {
-    return this.dataChannels.get(label)
-  }
-
-  public async handleMessage (message: IncomingMessage) {
+  public async handleMessage (message: IncomingMessage): Promise<void> {
     switch (message.cmd) {
       case 'ice':
         this.raw.addIceCandidate(new RTCIceCandidate(message.data.candidate))
@@ -77,7 +71,7 @@ export default class PeerConnection extends EventEmitter3 {
     }
   }
 
-  private async handleIceCandidate (ev: RTCPeerConnectionIceEvent) {
+  private async handleIceCandidate (ev: RTCPeerConnectionIceEvent): Promise<void> {
     if (!ev.candidate) {
       return
     }
@@ -105,28 +99,30 @@ export default class PeerConnection extends EventEmitter3 {
   }
 
   private handleTrack (ev: RTCTrackEvent) {
-    this.emit('track', ev.track, ev.streams)
+    this.dispatchEvent(new CustomEvent('track', {
+      detail: {
+        track: ev.track,
+        streams: ev.streams
+      }
+    }))
   }
 
   private handleDataChannel (ev: RTCDataChannelEvent) {
-    if (!this.listenerCount('data-channel')) {
-      this.emit('error', new Error('Incoming data channel, but no listener(s)'))
-    }
+    const { channel } = ev
 
-    const channel = new DataChannel(this, ev.channel)
-
-    channel.once('close', () => {
+    channel.addEventListener('close', () => {
       this.dataChannels.delete(channel.label)
-    })
+    }, { once: true })
 
-    this.dataChannels.set(channel.label, channel)
-    this.emit('data-channel', channel)
+    this.dispatchEvent(new CustomEvent('data-channel', {
+      detail: channel
+    }))
   }
 
   private handleIceConnectionStateChange () {
     switch (this.raw.iceConnectionState) {
       case 'failed':
-        this.emit('failed')
+        this.dispatchEvent(new Event('failed'))
         this.handleClose()
         break
       case 'closed':
@@ -142,6 +138,6 @@ export default class PeerConnection extends EventEmitter3 {
     this.raw.removeEventListener('datachannel', this.handleDataChannel)
     this.raw.removeEventListener('track', this.handleTrack)
 
-    this.emit('close')
+    this.dispatchEvent(new Event('close'))
   }
 }

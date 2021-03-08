@@ -1,9 +1,9 @@
 'use strict'
 
-import EventEmitter3 from 'eventemitter3'
-import Client, { OutgoingMessage } from './Client'
+import Client from './Client'
+import { OutgoingMessage } from './Client'
 
-export default class OutgoingSession extends EventEmitter3 {
+export default class OutgoingSession extends EventTarget {
   public readonly client: Client
   public readonly target: string
 
@@ -17,7 +17,7 @@ export default class OutgoingSession extends EventEmitter3 {
 
   public async cancel (reason?: string): Promise<void> {
     if (this.settled) {
-      throw new Error('Request settled')
+      throw new Error('Request already settled')
     }
 
     const request: OutgoingMessage = {
@@ -42,17 +42,17 @@ export default class OutgoingSession extends EventEmitter3 {
     this.settle('canceled')
   }
 
-  public handleAccept () {
+  public handleAccept (): void {
     if (this.settled) {
-      throw new Error('Request settled')
+      throw new Error('Request already settled')
     }
 
     const connection = this.client.createPeerConnection(this.target)
     this.settle('accepted', connection)
   }
 
-  public handleReject () {
-    this.settle('rejected')
+  public handleReject (reason?: string): void {
+    this.settle('rejected', reason)
   }
 
   public handleTimeout () {
@@ -65,7 +65,7 @@ export default class OutgoingSession extends EventEmitter3 {
     }
 
     this.settled = true
-    this.emit(type, arg)
-    this.emit('settled')
+    this.dispatchEvent(arg ? new CustomEvent(type, { detail: arg }) : new Event(type))
+    this.dispatchEvent(new Event('settled'))
   }
 }
