@@ -3,13 +3,20 @@
 **Signal-Fire Client** is a **WebRTC** signaling client for
 [Signal-Fire Server](https://github.com/Signal-Fire/server).
 
+A WebRTC signaling server communicates between peers to set up
+peer-to-peer audio/video and/or data channels. This allows your
+clients to communicate directly with each other.
+
 ## Features
 
+* Desgigned for the __browser__
+* Includes [webrtc-adapter](https://github.com/webrtchacks/adapter) for browser compatibility
 * Works __seamlessly__ with [Signal-Fire Server](https://github.com/Signal-Fire/server)
 * __Abstracts away__ the hassles of setting up peer connections
-* Uses a __simple__, JSON-based protocol
+* Uses a __simple__, JSON-based [protocol](https://github.com/Signal-Fire/server/blob/main/PROTOCOL.md)
 * __Flexible__ and __easy__ to use
-* Uses `EventTarget` natively for browser compatibility
+* Uses `EventTarget` __natively__
+* No __forest of dependencies__
 
 ## Install
 
