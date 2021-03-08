@@ -2,9 +2,20 @@
 
 import adapter from 'webrtc-adapter'
 import Client, { IncomingMessage } from './lib/Client'
+import IncomingSession from './lib/IncomingSession'
+import PeerConnection from './lib/PeerConnection'
 
 /** The client protocol */
 export const PROTOCOL = 'Signal-Fire@2'
+
+// Define event types for ease of use
+export type DataChannelEvent = CustomEvent<RTCDataChannel>
+export type TrackEvent = CustomEvent<{ track: MediaStreamTrack, streams: MediaStream[] }>
+export type IncomingSessionEvent = CustomEvent<IncomingSession>
+export type IncomingPeerConnectionEvent = CustomEvent<PeerConnection>
+export type SessionAcceptedEvent = CustomEvent<PeerConnection>
+export type SessionRejectedEvent = CustomEvent<string>
+export type SessionCanceledEvent = CustomEvent<string>
 
 /**
  * Connect to a Signal-Fire server instance.

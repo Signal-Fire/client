@@ -40,13 +40,13 @@ The Client is designed to be used with [browserify](http://browserify.org).
 This example shows how to start a session.
 
 ```ts
-import connect, { PeerConnection } from '@signal-fire/client'
+import connect, { PeerConnection, SessionAcceptedEvent } from '@signal-fire/client'
 
 async function run () {
   const client = await connect('ws://localhost:3003/socket')
   const session = await client.createSession('<target id>')
 
-  session.addEventListener('accepted', (ev: CustomEvent<PeerConnection>) => {
+  session.addEventListener('accepted', (ev: SessionAcceptedEvent) => {
     console.log('Session accepted!')
 
     const connection = ev.detail
@@ -76,7 +76,7 @@ import connect, { IncomingSession } from '@signal-fire/client'
 async function run () {
   const client = await connect('ws://localhost:3003/socket')
 
-  client.addEventListener('session', (ev: CustomEvent<IncomingSession>) => {
+  client.addEventListener('session', (ev: IncomingSessionEvent) => {
     const session = ev.detail
     const connection = await session.accept()
   })

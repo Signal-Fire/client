@@ -52,13 +52,17 @@ the session request.
 > extended to include this functionality.
 
 ```typescript
-import { PeerConnection } from '@signal-fire/client'
+import {
+  PeerConnection,
+  SessionAcceptedEvent,
+  SessionRejectedEvent
+} from '@signal-fire/client'
 
 // Create a new session request for the target ID
 const session = await client.createSession('<target id>')
 
 // The target has accepted the request
-session.addEventListener('accepted', (ev: CustomEvent<PeerConnection>) => {
+session.addEventListener('accepted', (ev: SessionAcceptedEvent) => {
   console.log('Session accepted')
 
   // Access the connection through the `detail` property
@@ -69,7 +73,7 @@ session.addEventListener('accepted', (ev: CustomEvent<PeerConnection>) => {
 })
 
 // The target had rejected the request
-session.addEventListener('rejected', (ev: CustomEvent<string>) => {
+session.addEventListener('rejected', (ev: SessionRejectedEvent) => {
   console.log(`Session rejected with reason ${ev.detail ?? 'none'}`)
 })
 
@@ -90,7 +94,7 @@ session.addEventListener('settled', () => {
 import { IncomingSession } from '@signal-fire/client'
 
 // We have an incoming session request
-client.addEventListener('session', async (ev: CustomEvent<IncomingSession>) => {
+client.addEventListener('session', async (ev: IncomingSessionEvent) => {
   const session = ev.detail
 
   // Accept the session request...
@@ -117,8 +121,9 @@ const stream = await navigator.mediaDevices.getUserMedia({
 stream.getTracks().forEach(track => connection.addTrack(track, stream))
 
 // listen for incoming tracks
-connection.addEventListener('track', (ev: CustomEvent<{ track: MediaStreamTrack, streams: MediaStream[] }>)) {
+connection.addEventListener('track', (ev: TrackEvent)) {
   // we have received a track from the remote peer
+  // ev.track is the track, ev.streams are the streams
 }
 ```
 
@@ -132,13 +137,15 @@ Creating one is easy:
 ```typescript
 const channel = connection.createDataChannel('label')
 
-// `channel` is a regulat RTCDataChannel without spice
+// `channel` is a regular RTCDataChannel without spice
 ```
 
 Listen for data channels created by the other peer:
 
 ```typescript
-connection.addEventListener('data-channel', (ev: CustomEvent<RTCDataChannel>) => {
+connection.addEventListener('data-channel', (ev: DataChannelEvent) => {
+  const channel = ev.detail
+
   // do something with the data channel...
 })
 ```
