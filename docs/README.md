@@ -61,6 +61,9 @@ import {
 // Create a new session request for the target ID
 const session = await client.createSession('<target id>')
 
+// You can also cancel the request
+// await session.cancel()
+
 // The target has accepted the request
 session.addEventListener('accepted', (ev: SessionAcceptedEvent) => {
   console.log('Session accepted')
@@ -91,7 +94,7 @@ session.addEventListener('settled', () => {
 ## Accepting or Rejecting a Session
 
 ```typescript
-import { IncomingSession } from '@signal-fire/client'
+import { IncomingSessionEvent } from '@signal-fire/client'
 
 // We have an incoming session request
 client.addEventListener('session', async (ev: IncomingSessionEvent) => {
@@ -108,6 +111,8 @@ client.addEventListener('session', async (ev: IncomingSessionEvent) => {
 ## Media Setup
 
 ```typescript
+import { TrackEvent } from '@signal-fire/client'
+
 // We got our connection from somehwere
 const connection: PeerConnection
 
@@ -118,12 +123,14 @@ const stream = await navigator.mediaDevices.getUserMedia({
 })
 
 // Add each track to the connection
-stream.getTracks().forEach(track => connection.addTrack(track, stream))
+stream.getTracks().forEach(track => {
+  connection.addTrack(track, stream)
+})
 
 // listen for incoming tracks
 connection.addEventListener('track', (ev: TrackEvent)) {
   // we have received a track from the remote peer
-  // ev.track is the track, ev.streams are the streams
+  // ev.detail.track is the track, ev.detail.streams are the streams
 }
 ```
 
