@@ -77,6 +77,11 @@ session.addEventListener('rejected', (ev: CustomEvent<string>) => {
 session.addEventListener('timed-out', () => {
   console.log('Session timed out')
 })
+
+// The `settled` event is fired regardless
+session.addEventListener('settled', () => {
+  console.log('Session settled')
+}, { once: true })
 ```
 
 ## Accepting or Rejecting a Session
@@ -86,6 +91,8 @@ import { IncomingSession } from '@signal-fire/client'
 
 // We have an incoming session request
 client.addEventListener('session', async (ev: CustomEvent<IncomingSession>) => {
+  const session = ev.detail
+
   // Accept the session request...
   const connection = await session.accept()
 
@@ -110,7 +117,7 @@ const stream = await navigator.mediaDevices.getUserMedia({
 stream.getTracks().forEach(track => connection.addTrack(track, stream))
 
 // listen for incoming tracks
-connection.addEventListener('track', (ev: CustomEvent< track: MediaStreamTrack, streams: MediaStream[] >)) {
+connection.addEventListener('track', (ev: CustomEvent<{ track: MediaStreamTrack, streams: MediaStream[] }>)) {
   // we have received a track from the remote peer
 }
 ```
