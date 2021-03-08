@@ -124,7 +124,7 @@ const stream = await navigator.mediaDevices.getUserMedia({
 stream.getTracks().forEach(track => connection.addTrack(track, stream))
 
 // listen for incoming tracks
-connection.addEventListener('track', (ev: CustomEvent< trac: MediaStreamTrack, streams: MediaStream[] >)) {
+connection.addEventListener('track', (ev: CustomEvent< track: MediaStreamTrack, streams: MediaStream[] >)) {
   // we have received a track from the remote peer
 }
 ```
