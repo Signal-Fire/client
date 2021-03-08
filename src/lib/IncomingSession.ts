@@ -33,16 +33,7 @@ export default class IncomingSession extends EventTarget {
       throw err
     }
 
-    return new Promise<PeerConnection>((resolve) => {
-      const onIncoming = (ev: CustomEvent<PeerConnection>) => {
-        if (ev.detail.target === this.origin) {
-          this.client.removeEventListener('incoming', onIncoming)
-          resolve(ev.detail)
-        }
-      }
-
-      this.client.addEventListener('incoming', onIncoming)
-    })
+    return this.client.createPeerConnection(this.origin)
   }
 
   public async reject (): Promise<void> {
