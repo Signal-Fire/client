@@ -1,10 +1,7 @@
 'use strict'
 
-import {
-  Client,
-  PeerConnection,
-  OutgoingMessage
-} from '../index'
+import Client, { OutgoingMessage } from './Client'
+import PeerConnection from './PeerConnection'
 
 export default class IncomingSession extends EventTarget {
   public readonly client: Client
