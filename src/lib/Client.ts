@@ -151,9 +151,6 @@ export default class Client extends EventTarget {
     }
 
     switch (message.cmd) {
-      case 'welcome':
-        this.handleWelcome(message)
-        return
       case 'session-start':
         this.handleSessionStart(message)
         return
@@ -169,30 +166,6 @@ export default class Client extends EventTarget {
         this.handlePeerMessage(message)
         return
     }
-  }
-
-  private handleWelcome (message: IncomingMessage) {
-    if (this.id) {
-      this.dispatchEvent(new CustomEvent('error', {
-        detail: new Error('Already got an ID')
-      }))
-      return
-    }
-
-    // @ts-ignore
-    const id = this.id = message.data.id
-
-    if (message.data.config) {
-      // @ts-ignore
-      this.config = {
-        ...this.configuration,
-        ...message.data.config
-      }
-    }
-
-    this.dispatchEvent(new CustomEvent('welcome', {
-      detail: id
-    }))
   }
 
   private handleSessionStart (message: IncomingMessage) {
