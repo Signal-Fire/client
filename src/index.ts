@@ -70,6 +70,13 @@ export default async function connect (url: string, configuration?: RTCConfigura
         return
       }
 
+      if (message.data.config) {
+        configuration = {
+          ...(configuration ?? {}),
+          ...message.data.config
+        }
+      }
+
       removeListeners()
       resolve(new Client(message.data.id, socket, configuration))
     }
