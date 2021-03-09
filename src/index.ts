@@ -34,16 +34,16 @@ export default async function connect (url: string, configuration?: RTCConfigura
     function onOpen () {
       if (socket.protocol !== PROTOCOL) {
         removeListeners()
-        socket.close(1002)
         reject(new Error(`Expected protocol to be ${PROTOCOL} but got ${socket.protocol ?? 'none'}`))
+        socket.close(1002)
       }
     }
 
     function onMessage (ev: MessageEvent<string>) {
       if (typeof ev.data !== 'string') {
         removeListeners()
-        socket.close(1003)
         reject(new Error('Expected a string'))
+        socket.close(1003)
         return
       }
 
@@ -53,20 +53,20 @@ export default async function connect (url: string, configuration?: RTCConfigura
         message = JSON.parse(ev.data)
       } catch (e) {
         removeListeners()
-        socket.close(1003)
         reject(new Error('Unable to parse message'))
+        socket.close(1003)
         return
       }
 
       if (message.cmd !== 'welcome') {
         removeListeners()
-        socket.close(1008)
         reject(new Error('Expected \'welcome\' message'))
+        socket.close(1008)
         return
       } else if (!message.data.id) {
         removeListeners()
-        socket.close(1008)
         reject(new Error('Missing Client ID'))
+        socket.close(1008)
         return
       }
 
