@@ -16,6 +16,7 @@ export type IncomingPeerConnectionEvent = CustomEvent<PeerConnection>
 export type SessionAcceptedEvent = CustomEvent<PeerConnection>
 export type SessionRejectedEvent = CustomEvent<string>
 export type SessionCanceledEvent = CustomEvent<string>
+export type SocketCloseEvent = CustomEvent<{ code: number, reason: string }>
 
 /**
  * Connect to a Signal-Fire server instance.
