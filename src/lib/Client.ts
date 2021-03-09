@@ -2,7 +2,6 @@
 
 import { nanoid } from 'nanoid/async'
 
-import { PROTOCOL } from '../index'
 import PeerConnection from './PeerConnection'
 import IncomingSession from './IncomingSession'
 import OutgoingSession from './OutgoingSession'
