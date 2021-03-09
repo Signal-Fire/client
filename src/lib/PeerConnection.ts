@@ -52,6 +52,10 @@ export default class PeerConnection extends EventTarget {
     return this.dataChannels.get(label)
   }
 
+  public close () {
+    this.raw.close()
+  }
+
   public async handleMessage (message: IncomingMessage): Promise<void> {
     switch (message.cmd) {
       case 'ice':
