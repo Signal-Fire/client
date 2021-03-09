@@ -39,6 +39,7 @@ export default class Client extends EventTarget {
   private readonly pendingIncomingSessions: Map<string, IncomingSession> = new Map()
   private readonly pendingOutgoingSessions: Map<string, OutgoingSession> = new Map()
   private readonly pendingResponses: Map<string, (message: IncomingMessage) => void> = new Map()
+  private readonly customCommands: Map<string, (message: IncomingMessage) => Promise<void>> = new Map()
 
   public constructor (id: string, socket: WebSocket, configuration: RTCConfiguration = {}) {
     super()
@@ -107,6 +108,10 @@ export default class Client extends EventTarget {
     return connection
   }
 
+  public addCommand (cmd: string, fn: (message: IncomingMessage) => Promise<void>) {
+    this.customCommands.set(cmd, fn)
+  }
+
   public async send (message: OutgoingMessage): Promise<IncomingMessage> {
     if (this.socket.readyState !== WebSocket.OPEN) {
       throw new Error('Socket not open')
@@ -164,6 +169,21 @@ export default class Client extends EventTarget {
       case 'answer':
         this.handlePeerMessage(message)
         return
+      default:
+        this.handleCustomCommand(message)
+        return
+    }
+  }
+
+  private handleCustomCommand (message: IncomingMessage) {
+    const fn = this.customCommands.get(message.cmd)
+
+    if (fn) {
+      fn(message).catch(err => {
+        this.dispatchEvent(new CustomEvent<Error>('error', {
+          detail: err
+        }))
+      })
     }
   }
 
