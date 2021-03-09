@@ -156,3 +156,38 @@ connection.addEventListener('data-channel', (ev: DataChannelEvent) => {
   // do something with the data channel...
 })
 ```
+
+## Adding a Command
+
+The example below adds a custom `client-info` command.
+The server requests some info from the client. In order to
+process the command we need to add the custom command function
+to the Client.
+
+> You may get a type error here. It's being worked on.
+
+```typescript
+import { IncomingMessage } from '@signal-fire/client'
+
+client.addCommand('client-info',
+  async function clientInfo (message: IncomingMessage) {
+    await ctx.send({
+      cmd: 'client-info',
+      data: {
+        message: {
+          id: ctx.state.id,
+          config: client.configuration
+        }
+      }
+    })
+  }
+)
+```
+
+> Other clients can send you this command too. You should
+> check if the message has an `origin` property, which denotes
+> the origin Client's ID. For brevity, I left it out of this
+> example.
+
+Now the Client processes `client-info` commands by sending
+some client info back to the server.
