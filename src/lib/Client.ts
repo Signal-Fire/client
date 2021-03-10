@@ -67,7 +67,7 @@ export default class Client extends EventTarget {
       throw new Error('Can\'t send a message to yourself')
     } else if (this.connections.has(target)) {
       throw new Error('Peer connection already established')
-    } else if (this.pendingOutgoingSessions.has(target), this.pendingIncomingSessions.has(target)) {
+    } else if (this.pendingOutgoingSessions.has(target) || this.pendingIncomingSessions.has(target)) {
       throw new Error('Session request already active')
     }
 
