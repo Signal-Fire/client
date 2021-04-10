@@ -23,8 +23,6 @@ Install using npm:
 npm i @signal-fire/client
 ```
 
-The Client is designed to be used with [browserify](http://browserify.org).
-
 ## Documentation
 
 [Click here to view the documentation](https://signal-fire.github.io/client/).

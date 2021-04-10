@@ -15,8 +15,6 @@ The Client can be installed through npm:
 > npm i @signal-fire/client [--save]
 ```
 
-The Client has been designed to be used with [browserify](http://browserify.org).
-
 ## Connecting to the Server
 
 > We assume here the server is running [Signal Fire Server](https://github.com/Signal-Fire/server).
