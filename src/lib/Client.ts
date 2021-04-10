@@ -90,15 +90,15 @@ export default class Client extends EventTarget {
     return session
   }
 
-  public createPeerConnection (target?: string, configuration?: RTCConfiguration): PeerConnection {
+  public createPeerConnection (target: string, configuration: RTCConfiguration = {}): PeerConnection {
     if (this.id === target) {
       throw new Error('Can\'t create a connection with yourself')
     } else if (this.connections.has(target)) {
       throw new Error('Peer connection already created')
     }
 
-    const raw = new RTCPeerConnection({ ...this.configuration, ...(configuration ?? {}) })
-    const connection = new PeerConnection(this,target, raw)
+    const raw = new RTCPeerConnection({ ...this.configuration, ...configuration })
+    const connection = new PeerConnection(this, target, raw)
 
     connection.addEventListener('close', () => {
       this.connections.delete(target)

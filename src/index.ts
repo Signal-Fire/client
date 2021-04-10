@@ -24,7 +24,7 @@ export type CustomCommandErrorEvent = CustomEvent<Error>
  * @param url The URL of the Signal-Fire server
  * @param configuration WebRTC configuration
  */
-export default async function connect (url: string, configuration?: RTCConfiguration): Promise<Client> {
+export default async function connect (url: string, configuration: RTCConfiguration = {}): Promise<Client> {
   return new Promise<Client>((resolve, reject) => {
     function removeListeners () {
       socket.removeEventListener('open', onOpen)
@@ -74,7 +74,7 @@ export default async function connect (url: string, configuration?: RTCConfigura
 
       if (message.data.config) {
         configuration = {
-          ...(configuration ?? {}),
+          ...configuration,
           ...message.data.config
         }
       }
