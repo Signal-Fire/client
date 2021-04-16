@@ -11,7 +11,6 @@ clients to communicate directly with each other.
 
 * Works __seamlessly__ with [Signal-Fire Server](https://github.com/Signal-Fire/server)
 * __Abstracts away__ the hassles of setting up peer connections
-* Includes [webrtc-adapter](https://github.com/webrtchacks/adapter) for browser compatibility
 * Uses a __simple__, JSON-based [protocol](https://github.com/Signal-Fire/server/blob/main/PROTOCOL.md)
 * __No__ forest of dependencies
 
