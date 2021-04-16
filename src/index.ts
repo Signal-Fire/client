@@ -1,6 +1,5 @@
 'use strict'
 
-import adapter from 'webrtc-adapter'
 import Client, { IncomingMessage } from './lib/Client'
 import IncomingSession from './lib/IncomingSession'
 import PeerConnection from './lib/PeerConnection'
@@ -105,7 +104,3 @@ export { default as Client, Message, OutgoingMessage, IncomingMessage } from './
 export { default as PeerConnection } from './lib/PeerConnection'
 export { default as IncomingSession } from './lib/IncomingSession'
 export { default as OutgoingSession } from './lib/OutgoingSession'
-
-// Hack to make sure the adapter import is not removed
-// by the TypeScript compiler
-export const browserVersion = adapter.browserDetails.version
