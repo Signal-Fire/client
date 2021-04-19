@@ -19,12 +19,14 @@ export default class PeerConnection extends EventTarget {
     this.handleNegotiationNeeded = this.handleNegotiationNeeded.bind(this)
     this.handleIceCandidate = this.handleIceCandidate.bind(this)
     this.handleIceConnectionStateChange = this.handleIceConnectionStateChange.bind(this)
+    this.handleSignalingStateChange = this.handleSignalingStateChange.bind(this)
     this.handleDataChannel = this.handleDataChannel.bind(this)
     this.handleTrack = this.handleTrack.bind(this)
 
     raw.addEventListener('negotiationneeded', this.handleNegotiationNeeded)
     raw.addEventListener('icecandidate', this.handleIceCandidate)
     raw.addEventListener('iceconnectionstatechange', this.handleIceConnectionStateChange)
+    raw.addEventListener('signalingstatechange', this.handleSignalingStateChange)
     raw.addEventListener('datachannel', this.handleDataChannel)
     raw.addEventListener('track', this.handleTrack)
   }
@@ -161,10 +163,17 @@ export default class PeerConnection extends EventTarget {
     }
   }
 
+  private handleSignalingStateChange () {
+    if (this.raw.signalingState === 'closed') {
+      this.handleClose()
+    }
+  }
+
   private handleClose () {
     this.raw.removeEventListener('negotiationneeded', this.handleNegotiationNeeded)
     this.raw.removeEventListener('icecandidate', this.handleIceCandidate)
     this.raw.removeEventListener('iceconnectionstatechange', this.handleIceConnectionStateChange)
+    this.raw.removeEventListener('signalingstatechange', this.handleSignalingStateChange)
     this.raw.removeEventListener('datachannel', this.handleDataChannel)
     this.raw.removeEventListener('track', this.handleTrack)
 
