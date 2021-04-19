@@ -1,6 +1,6 @@
 'use strict'
 
-import { nanoid } from 'nanoid/async'
+import { nanoid } from 'nanoid'
 
 import PeerConnection from './PeerConnection'
 import IncomingSession from './IncomingSession'
@@ -127,7 +127,7 @@ export default class Client extends EventTarget {
       throw new Error('Can\'t send to yourself')
     }
 
-    message.id = message.id ?? await nanoid()
+    message.id = message.id ?? nanoid()
     return new Promise<IncomingMessage>(resolve => {
       this.pendingResponses.set(message.id, resolve)
       this.socket.send(JSON.stringify(message))
