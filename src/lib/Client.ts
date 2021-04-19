@@ -62,6 +62,10 @@ export default class Client extends EventTarget {
     this.configuration = configuration
   }
 
+  public getConnection (target: string): PeerConnection {
+    return this.connections.get(target)
+  }
+
   public getConnections (): PeerConnection[] {
     return [ ...this.connections.values() ]
   }
