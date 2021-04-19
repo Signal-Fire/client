@@ -62,6 +62,10 @@ export default class Client extends EventTarget {
     this.configuration = configuration
   }
 
+  public getConnections (): PeerConnection[] {
+    return [ ...this.connections.values() ]
+  }
+
   public async createSession (target: string): Promise<OutgoingSession> {
     if (this.id === target) {
       throw new Error('Can\'t send a message to yourself')
