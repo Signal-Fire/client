@@ -48,6 +48,10 @@ export default class PeerConnection extends EventTarget {
     return channel
   }
 
+  public getDataChannels (): RTCDataChannel[] {
+    return [ ...this.dataChannels.values() ]
+  }
+
   public getDataChannel (label: string): RTCDataChannel {
     return this.dataChannels.get(label)
   }
