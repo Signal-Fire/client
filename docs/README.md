@@ -162,8 +162,6 @@ The server requests some info from the client. In order to
 process the command we need to add the custom command function
 to the Client.
 
-> You may get a type error here. It's being worked on.
-
 ```typescript
 import { IncomingMessage } from '@signal-fire/client'
 
