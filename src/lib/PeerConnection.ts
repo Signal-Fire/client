@@ -68,24 +68,24 @@ export default class PeerConnection extends EventTarget {
         this.handleIncomingIceCandidate(message.data.candidate)
         break
       case 'offer':
-        this.handleIncomingOffer(message.data.sdp).catch((err: Error) => {
+        this.handleIncomingOffer(message.data.offer).catch((err: Error) => {
           this.dispatchEvent(new CustomEvent<Error>('error', {
             detail: err
           }))
         })
         break
       case 'answer':
-        this.handleIncomingAnswer(message.data.sdp)
+        this.handleIncomingAnswer(message.data.offer)
         break
     }
   }
 
-  private handleIncomingIceCandidate (candidate: string) {
-    this.raw.addIceCandidate(new RTCIceCandidate({ candidate }))
+  private handleIncomingIceCandidate (candidate: RTCIceCandidate) {
+    this.raw.addIceCandidate(candidate)
   }
 
-  private async handleIncomingOffer (sdp: string) {
-    this.raw.setRemoteDescription(new RTCSessionDescription({ sdp }))
+  private async handleIncomingOffer (offer: RTCSessionDescription) {
+    this.raw.setRemoteDescription(offer)
 
     const answer = await this.raw.createAnswer()
     this.raw.setLocalDescription(answer)
@@ -94,13 +94,13 @@ export default class PeerConnection extends EventTarget {
       cmd: 'answer',
       target: this.target,
       data: {
-        sdp: this.raw.localDescription
+        answer: this.raw.localDescription
       }
     })
   }
 
-  private handleIncomingAnswer (sdp: string) {
-    this.raw.setRemoteDescription(new RTCSessionDescription({ sdp }))
+  private handleIncomingAnswer (answer: RTCSessionDescription) {
+    this.raw.setRemoteDescription(answer)
   }
 
   private async handleIceCandidate (ev: RTCPeerConnectionIceEvent): Promise<void> {
@@ -125,7 +125,7 @@ export default class PeerConnection extends EventTarget {
       cmd: 'offer',
       target: this.target,
       data: {
-        sdp: this.raw.localDescription
+        offer: this.raw.localDescription
       }
     })
   }

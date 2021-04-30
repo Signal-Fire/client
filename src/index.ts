@@ -5,7 +5,7 @@ import IncomingSession from './lib/IncomingSession'
 import PeerConnection from './lib/PeerConnection'
 
 /** The client protocol */
-export const PROTOCOL = 'Signal-Fire@2'
+export const PROTOCOL = 'Signal-Fire@3'
 
 // Define event types for ease of use
 export type DataChannelEvent = CustomEvent<RTCDataChannel>
@@ -71,10 +71,10 @@ export default async function connect (url: string, configuration: RTCConfigurat
         return
       }
 
-      if (message.data.config) {
+      if (message.data.configuration) {
         configuration = {
           ...configuration,
-          ...message.data.config
+          ...message.data.configuration
         }
       }
 

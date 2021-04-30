@@ -14,16 +14,11 @@ export interface Message {
   target?: string,
   data?: {
     id?: string,
-    candidate?: any,
-    sdp?: any,
+    offer?: RTCSessionDescription,
+    answer?: RTCSessionDescription,
+    candidate?: RTCIceCandidate,
     message?: string,
-    config?: {
-      bundlePolicy?: RTCBundlePolicy,
-      iceCandidatePoolSize?: number,
-      iceServers?: RTCIceServer[],
-      iceTransportPolicy?: RTCIceTransportPolicy,
-      rtcpMuxPolicy?: RTCRtcpMuxPolicy
-    }
+    configuration?: RTCConfiguration
   }
 }
 
